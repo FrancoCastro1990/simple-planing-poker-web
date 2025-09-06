@@ -1,16 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocalUser } from '@features/authentication/useLocalUser';
-import { generateRoomId, isValidRoomId } from '@shared/utils';
+import { useRoomSession } from '@features/room-management/useRoomSession';
+//import { isValidRoomId } from '@shared/utils';
 
 export const HomePage = () => {
   const navigate = useNavigate();
   const { user, saveUser, hasUser } = useLocalUser();
+  const { navigateToCurrentRoom } = useRoomSession();
   const [userName, setUserName] = useState('');
   const [roomTitle, setRoomTitle] = useState('');
   const [joinRoomId, setJoinRoomId] = useState('');
   const [error, setError] = useState('');
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
+
+  // Auto-navigate to current room if user has one and is logged in
+  useEffect(() => {
+    if (hasUser) {
+      navigateToCurrentRoom();
+    }
+  }, [hasUser, navigateToCurrentRoom]);
 
   const handleSaveUser = () => {
     if (!userName.trim()) {
@@ -36,17 +45,14 @@ export const HomePage = () => {
     setError('');
 
     try {
-      const roomId = generateRoomId();
       const response = await fetch('http://localhost:3001/api/rooms', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id: roomId,
           title: roomTitle.trim() || undefined,
           maxUsers: 10,
-          totalScore: 0,
         }),
       });
 
@@ -79,11 +85,11 @@ export const HomePage = () => {
       return;
     }
 
-    const roomId = joinRoomId.toUpperCase();
-    if (!isValidRoomId(roomId)) {
-      setError('Room ID must be 6 characters (letters and numbers)');
-      return;
-    }
+    const roomId = joinRoomId.trim();
+    // if (!isValidRoomId(roomId)) {
+    //   setError('Room ID must be 6 letters (mixed case allowed)');
+    //   return;
+    // }
 
     navigate(`/room/${roomId}`);
   };
@@ -107,23 +113,42 @@ export const HomePage = () => {
                 onChange={(e) => setUserName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSaveUser()}
                 placeholder="Your name"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                className="w-full px-4 py-2 border-2 rounded-lg transition-all duration-200
                          bg-white dark:bg-gray-700 text-light-text dark:text-dark-text
-                         focus:outline-none focus:ring-2 focus:ring-light-blue dark:focus:ring-dark-blue"
+                         focus:outline-none focus:ring-0"
+                style={{
+                  borderColor: 'var(--color-light-blue)',
+                  '--tw-ring-color': 'var(--color-light-blue)'
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--color-light-blue-hover)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--color-light-blue)'}
                 maxLength={50}
               />
             </div>
             
             {error && (
-              <p className="text-light-red dark:text-dark-red text-sm">{error}</p>
+              <p className="text-sm font-medium" style={{ color: 'var(--color-light-red)' }}>{error}</p>
             )}
             
             <button
               onClick={handleSaveUser}
               disabled={!userName.trim()}
-              className="w-full py-2 px-4 bg-light-blue dark:bg-dark-blue text-white 
-                       rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed
-                       transition-opacity"
+              className="w-full py-2 px-4 text-white rounded-lg disabled:cursor-not-allowed
+                       transition-all duration-200 font-medium"
+              style={{
+                backgroundColor: userName.trim() ? 'var(--color-light-blue)' : 'var(--color-light-bg)',
+                opacity: userName.trim() ? 1 : 0.5
+              }}
+              onMouseEnter={(e) => {
+                if (userName.trim()) {
+                  e.target.style.backgroundColor = 'var(--color-light-blue-hover)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (userName.trim()) {
+                  e.target.style.backgroundColor = 'var(--color-light-blue)';
+                }
+              }}
             >
               Continue
             </button>
@@ -156,18 +181,36 @@ export const HomePage = () => {
               value={roomTitle}
               onChange={(e) => setRoomTitle(e.target.value)}
               placeholder="Room title (optional)"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+              className="w-full px-4 py-2 border-2 rounded-lg transition-all duration-200
                        bg-white dark:bg-gray-700 text-light-text dark:text-dark-text
-                       focus:outline-none focus:ring-2 focus:ring-light-green dark:focus:ring-dark-green"
+                       focus:outline-none focus:ring-0"
+              style={{
+                borderColor: 'var(--color-light-green)'
+              }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--color-light-green-hover)'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--color-light-green)'}
               maxLength={100}
             />
             
             <button
               onClick={handleCreateRoom}
               disabled={isCreatingRoom}
-              className="w-full py-3 px-4 bg-light-green dark:bg-dark-green text-white 
-                       rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed 
-                       transition-opacity font-medium"
+              className="w-full py-3 px-4 text-white rounded-lg disabled:cursor-not-allowed 
+                       transition-all duration-200 font-medium"
+              style={{
+                backgroundColor: isCreatingRoom ? 'var(--color-light-green)' : 'var(--color-light-green)',
+                opacity: isCreatingRoom ? 0.7 : 1
+              }}
+              onMouseEnter={(e) => {
+                if (!isCreatingRoom) {
+                  e.target.style.backgroundColor = 'var(--color-light-green-hover)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isCreatingRoom) {
+                  e.target.style.backgroundColor = 'var(--color-light-green)';
+                }
+              }}
             >
               {isCreatingRoom ? 'Creating Room...' : 'Create Room'}
             </button>
@@ -181,29 +224,42 @@ export const HomePage = () => {
             <input
               type="text"
               value={joinRoomId}
-              onChange={(e) => setJoinRoomId(e.target.value.toUpperCase())}
+              onChange={(e) => setJoinRoomId(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
-              placeholder="Enter room ID (6 characters)"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+              placeholder="Enter room ID (6 letters)"
+              className="w-full px-4 py-2 border-2 rounded-lg transition-all duration-200
                        bg-white dark:bg-gray-700 text-light-text dark:text-dark-text
-                       focus:outline-none focus:ring-2 focus:ring-light-blue dark:focus:ring-dark-blue
+                       focus:outline-none focus:ring-0
                        font-mono text-center tracking-widest"
+              style={{
+                borderColor: 'var(--color-light-magenta)'
+              }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--color-light-magenta-hover)'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--color-light-magenta)'}
               maxLength={6}
             />
             
             <button
               onClick={handleJoinRoom}
-              disabled={!joinRoomId.trim()}
-              className="w-full mt-4 py-3 px-4 bg-light-blue dark:bg-dark-blue text-white 
-                       rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed
-                       transition-opacity font-medium"
+              //disabled={!joinRoomId.trim()}
+              className="w-full mt-4 py-3 px-4 text-white rounded-lg
+                       transition-all duration-200 font-medium"
+              style={{
+                backgroundColor: 'var(--color-light-magenta)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = 'var(--color-light-magenta-hover)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'var(--color-light-magenta)';
+              }}
             >
               Join Room
             </button>
           </div>
           
           {error && (
-            <p className="text-light-red dark:text-dark-red text-sm text-center">{error}</p>
+            <p className="text-sm text-center font-medium" style={{ color: 'var(--color-light-red)' }}>{error}</p>
           )}
         </div>
       </div>

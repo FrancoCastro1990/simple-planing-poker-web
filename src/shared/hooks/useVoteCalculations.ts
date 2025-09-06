@@ -4,9 +4,13 @@ import type { FibonacciCard, VoteResult } from '@app/types';
 export const useVoteCalculations = (votes: Record<string, FibonacciCard>, userNames: Record<string, string>) => {
   const calculations = useMemo(() => {
     const calculateAverage = (voteValues: FibonacciCard[]): number => {
-      const numericVotes = voteValues.filter((vote): vote is number => 
-        typeof vote === 'number' && vote !== undefined
-      );
+      const numericVotes: number[] = [];
+      
+      voteValues.forEach(vote => {
+        if (typeof vote === 'number') {
+          numericVotes.push(vote);
+        }
+      });
       
       if (numericVotes.length === 0) return 0;
       

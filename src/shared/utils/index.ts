@@ -1,7 +1,7 @@
 import type { FibonacciCard } from '@app/types';
 
 export const generateRoomId = (): string => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   let result = '';
   for (let i = 0; i < 6; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -14,7 +14,7 @@ export const generateUserId = (): string => {
 };
 
 export const isValidRoomId = (roomId: string): boolean => {
-  return /^[A-Z0-9]{6}$/.test(roomId);
+  return /^[A-Za-z]{6}$/.test(roomId);
 };
 
 export const formatVoteForDisplay = (vote: FibonacciCard): string => {

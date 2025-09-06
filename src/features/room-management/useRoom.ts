@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import type { Room, User, FibonacciCard } from '@app/types';
+import type { Room, FibonacciCard } from '@app/types';
 import type { LocalUser } from '@features/authentication/useLocalUser';
 
 const SOCKET_URL = 'http://localhost:3001';

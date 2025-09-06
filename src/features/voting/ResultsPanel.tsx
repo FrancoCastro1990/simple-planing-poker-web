@@ -21,13 +21,13 @@ export const ResultsPanel = ({ votes, users, isRevealed, onReveal, canReveal }: 
   if (!isRevealed) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-        <h2 className="text-lg font-semibold mb-4 text-light-text dark:text-dark-text">
+        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
           Results
         </h2>
         
         <div className="text-center py-8">
           <div className="mb-4">
-            <div className="text-3xl font-bold text-light-text dark:text-dark-text">
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">
               {totalVotes}
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -38,9 +38,22 @@ export const ResultsPanel = ({ votes, users, isRevealed, onReveal, canReveal }: 
           <button
             onClick={onReveal}
             disabled={!canReveal}
-            className="px-6 py-3 bg-light-green dark:bg-dark-green text-white 
-                     rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed
-                     transition-opacity font-medium"
+            className="px-6 py-3 text-white rounded-lg disabled:cursor-not-allowed
+                     transition-all duration-200 font-medium"
+            style={{
+              backgroundColor: canReveal ? 'var(--color-light-green)' : 'var(--color-light-bg)',
+              opacity: canReveal ? 1 : 0.5
+            }}
+            onMouseEnter={(e) => {
+              if (canReveal) {
+                e.target.style.backgroundColor = 'var(--color-light-green-hover)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (canReveal) {
+                e.target.style.backgroundColor = 'var(--color-light-green)';
+              }
+            }}
           >
             Reveal Votes
           </button>
@@ -57,12 +70,12 @@ export const ResultsPanel = ({ votes, users, isRevealed, onReveal, canReveal }: 
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-      <h2 className="text-lg font-semibold mb-4 text-light-text dark:text-dark-text">
+      <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
         Results
       </h2>
       
       <div className="mb-6 text-center">
-        <div className="text-3xl font-bold text-light-blue dark:text-dark-blue">
+        <div className="text-3xl font-bold" style={{ color: 'var(--color-light-blue)' }}>
           {average}
         </div>
         <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -74,33 +87,39 @@ export const ResultsPanel = ({ votes, users, isRevealed, onReveal, canReveal }: 
         {results.map((result) => (
           <div
             key={result.userId}
-            className={`
-              flex items-center justify-between p-3 rounded-lg
-              ${result.isHighest 
-                ? 'bg-light-red/10 dark:bg-dark-red/10 border border-light-red dark:border-dark-red' 
+            className="flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-200"
+            style={{
+              backgroundColor: result.isHighest 
+                ? 'var(--color-light-red-bg)' 
                 : result.isLowest
-                ? 'bg-light-blue/10 dark:bg-dark-blue/10 border border-light-blue dark:border-dark-blue'
-                : 'bg-gray-50 dark:bg-gray-700'
-              }
-            `}
+                ? 'var(--color-light-blue-bg)'
+                : 'var(--color-light-green-bg)',
+              borderColor: result.isHighest 
+                ? 'var(--color-light-red)' 
+                : result.isLowest
+                ? 'var(--color-light-blue)'
+                : 'var(--color-light-green)'
+            }}
           >
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-light-text dark:text-dark-text">
+              <span className="text-sm font-medium text-gray-900 dark:text-white">
                 {result.userName}
               </span>
               {result.isHighest && (
-                <span className="text-xs px-2 py-1 bg-light-red dark:bg-dark-red text-white rounded">
+                <span className="text-xs px-2 py-1 text-white rounded font-medium"
+                      style={{ backgroundColor: 'var(--color-light-red)' }}>
                   HIGH
                 </span>
               )}
               {result.isLowest && (
-                <span className="text-xs px-2 py-1 bg-light-blue dark:bg-dark-blue text-white rounded">
+                <span className="text-xs px-2 py-1 text-white rounded font-medium"
+                      style={{ backgroundColor: 'var(--color-light-blue)' }}>
                   LOW
                 </span>
               )}
             </div>
             
-            <div className="text-lg font-bold text-light-text dark:text-dark-text">
+            <div className="text-lg font-bold text-gray-900 dark:text-white">
               {formatVoteForDisplay(result.vote)}
             </div>
           </div>

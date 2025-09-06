@@ -5,6 +5,7 @@ export const FIBONACCI_SEQUENCE: FibonacciCard[] = [0, 1, 2, 3, 5, 8, 13, 21, 34
 export const LOCAL_STORAGE_KEYS = {
   USER_NAME: 'planning-poker-user-name',
   USER_ID: 'planning-poker-user-id',
+  CURRENT_ROOM: 'planning-poker-current-room',
 } as const;
 
 export const ROOM_CONFIG = {

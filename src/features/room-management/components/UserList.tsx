@@ -7,7 +7,7 @@ interface UserListProps {
 export const UserList = ({ users }: UserListProps) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-      <h2 className="text-lg font-semibold mb-4 text-light-text dark:text-dark-text">
+      <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
         Participants ({users.length})
       </h2>
       
@@ -15,22 +15,31 @@ export const UserList = ({ users }: UserListProps) => {
         {users.map((user) => (
           <div
             key={user.id}
-            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+            className="flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-200"
+            style={{
+              backgroundColor: user.hasVoted ? 'var(--color-light-green-bg)' : 'var(--color-light-yellow-bg)',
+              borderColor: user.hasVoted ? 'var(--color-light-green)' : 'var(--color-light-yellow)'
+            }}
           >
             <div className="flex items-center gap-3">
               <div 
-                className={`w-3 h-3 rounded-full ${
-                  user.hasVoted 
-                    ? 'bg-light-green dark:bg-dark-green animate-pulse' 
-                    : 'bg-gray-300 dark:bg-gray-500'
-                }`}
+                className="w-3 h-3 rounded-full transition-all duration-300"
+                style={{
+                  backgroundColor: user.hasVoted ? 'var(--color-light-green)' : 'var(--color-light-yellow)',
+                  animation: user.hasVoted ? 'pulse 2s infinite' : 'none'
+                }}
               />
-              <span className="text-light-text dark:text-dark-text font-medium">
+              <span className="text-gray-900 dark:text-white font-medium">
                 {user.name}
               </span>
             </div>
             
-            <div className="text-xs text-gray-500 dark:text-gray-400">
+            <div 
+              className="text-xs font-medium"
+              style={{
+                color: user.hasVoted ? 'var(--color-light-green)' : 'var(--color-light-yellow)'
+              }}
+            >
               {user.hasVoted ? 'Voted' : 'Waiting'}
             </div>
           </div>

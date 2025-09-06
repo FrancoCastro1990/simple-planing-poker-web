@@ -1,6 +1,6 @@
 import { useParams, Navigate } from 'react-router-dom';
 import { useLocalUser } from '@features/authentication/useLocalUser';
-import { isValidRoomId } from '@shared/utils';
+//import { isValidRoomId } from '@shared/utils';
 import { RoomContainer } from '@features/room-management/RoomContainer';
 
 export const RoomPage = () => {
@@ -19,7 +19,7 @@ export const RoomPage = () => {
     return <Navigate to="/" replace />;
   }
 
-  if (!id || !isValidRoomId(id)) {
+  if (!id) {
     return <Navigate to="/" replace />;
   }
 

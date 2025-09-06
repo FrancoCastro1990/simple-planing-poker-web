@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocalUser } from '@features/authentication/useLocalUser';
+import { useRoomSession } from './useRoomSession';
 import { RoomHeader } from './components/RoomHeader';
 import { UserList } from './components/UserList';
 import { VotingArea } from '@features/voting/VotingArea';
@@ -14,6 +15,7 @@ interface RoomContainerProps {
 export const RoomContainer = ({ roomId }: RoomContainerProps) => {
   const navigate = useNavigate();
   const { user } = useLocalUser();
+  const { clearCurrentRoom } = useRoomSession();
   const { 
     room, 
     isConnected, 
@@ -38,6 +40,7 @@ export const RoomContainer = ({ roomId }: RoomContainerProps) => {
 
   const handleLeaveRoom = () => {
     leaveRoom();
+    clearCurrentRoom();
     navigate('/');
   };
 
@@ -79,7 +82,7 @@ export const RoomContainer = ({ roomId }: RoomContainerProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-light-bg dark:bg-dark-bg">
+    <div className="min-h-screen bg-light-bg ">
       <div className="container mx-auto px-4 py-6">
         <RoomHeader 
           room={room}
