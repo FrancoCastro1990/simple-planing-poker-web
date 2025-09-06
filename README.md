@@ -1,145 +1,200 @@
-# Planning Poker
+# Simple Planning Poker - Frontend
 
-Una aplicación web para Planning Poker (estimación ágil) construida con React, TypeScript y Tailwind CSS.
+Una aplicación moderna de Planning Poker construida con React, TypeScript y Socket.IO para estimación ágil de proyectos de software.
 
-## Características
+## ✨ Características
 
-- ✅ **Sin autenticación**: Usar localStorage para usuarios temporales
-- ✅ **Salas con ID único**: URLs compartibles `/room/:id`
-- ✅ **Tiempo real**: Comunicación con Socket.IO (mock implementado)
-- ✅ **Votación Fibonacci**: Secuencia configurable [0,1,2,3,5,8,13,21,34,55,89,∞,?]
-- ✅ **Revelado de votos**: Mostrar resultados con promedio y destacar mayor/menor
-- ✅ **Responsive**: Compatible con móviles y escritorio
-- ✅ **Tema claro/oscuro**: UI adaptable
-- ✅ **Arquitectura limpia**: Screaming architecture con TypeScript
+- 🎮 **Interfaz intuitiva** con tarjetas estilo poker para estimación
+- 🎨 **Sistema de colores consistente** con modo claro/oscuro
+- 🔄 **Tiempo real** con Socket.IO para colaboración instantánea  
+- 📱 **Responsive design** optimizado para móvil y escritorio
+- 👥 **Gestión de salas** con códigos únicos de 6 caracteres
+- 🎯 **Secuencia Fibonacci** completa (0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, ∞, ?)
+- 📊 **Análisis de resultados** con cálculo automático de promedio
+- 💾 **Persistencia local** de datos de usuario
 
-## Stack Tecnológico
+## 🛠️ Stack Tecnológico
 
-- **Frontend**: React 18 + TypeScript + Vite
-- **Estilos**: Tailwind CSS con tema personalizado
-- **Rutas**: React Router v6
-- **Estado**: Context API + Custom Hooks
-- **Persistencia**: localStorage
-- **Tiempo Real**: Socket.IO (preparado para backend)
+- **Frontend Framework**: React 19.1.1
+- **Language**: TypeScript 5.8.3
+- **Build Tool**: Vite 7.1.2
+- **Routing**: React Router DOM 7.8.2
+- **Real-time Communication**: Socket.IO Client 4.8.1
+- **Styling**: Tailwind CSS 4.1.12
+- **Linting**: ESLint 9.33.0
 
-## Instalación
-
-```bash
-# Instalar dependencias
-npm install
-
-# Modo desarrollo
-npm run dev
-
-# Construir para producción  
-npm run build
-
-# Preview de build
-npm run preview
-```
-
-## Estructura del Proyecto
+## 📁 Estructura del Proyecto
 
 ```
 src/
-├── app/                    # Configuración de la aplicación
-│   ├── providers/         # Context providers
-│   ├── router/           # Configuración de rutas y páginas
-│   └── types/           # Tipos TypeScript globales
-├── features/              # Características por dominio
-│   ├── authentication/   # Manejo de usuario local
-│   ├── room-management/  # Crear/unirse a salas
-│   ├── voting/          # Sistema de votación
-│   └── real-time/      # Comunicación Socket.IO
-├── shared/               # Componentes y utilidades compartidas
-│   ├── components/     # UI components reutilizables
-│   ├── hooks/         # Custom hooks
-│   ├── utils/        # Funciones utilitarias
-│   └── constants/   # Constantes globales
+├── app/
+│   ├── router/                    # Configuración de rutas
+│   │   ├── AppRouter.tsx         # Router principal
+│   │   ├── HomePage.tsx          # Página de inicio
+│   │   └── RoomPage.tsx          # Página de sala
+│   └── types/                    # Definiciones TypeScript
+│       └── index.ts              # Tipos principales (User, Room, etc.)
+├── features/
+│   ├── authentication/           # Gestión de usuarios
+│   │   └── useLocalUser.ts      # Hook para usuarios locales
+│   ├── room-management/          # Gestión de salas
+│   │   ├── components/
+│   │   │   ├── RoomHeader.tsx   # Header de sala con acciones
+│   │   │   └── UserList.tsx     # Lista de participantes
+│   │   ├── RoomContainer.tsx    # Container principal de sala
+│   │   ├── useRoom.ts           # Hook para gestión de sala
+│   │   └── useRoomSession.ts    # Hook para sesión de sala
+│   └── voting/                   # Sistema de votación
+│       ├── VotingArea.tsx       # Área de tarjetas de votación
+│       └── ResultsPanel.tsx     # Panel de resultados
+├── shared/
+│   ├── constants/
+│   │   └── index.ts             # Constantes globales
+│   ├── hooks/
+│   │   └── useVoteCalculations.ts # Cálculos de votación
+│   └── utils/
+│       └── index.ts             # Utilidades generales
+└── index.css                    # Estilos globales y variables CSS
 ```
 
-## Uso
+## 🎨 Sistema de Colores
 
-### 1. Configurar Usuario
-- Al entrar por primera vez, introduce tu nombre
-- Se guarda en localStorage para futuras sesiones
+La aplicación utiliza un sistema de colores consistente con soporte para modo claro/oscuro:
 
-### 2. Crear o Unirse a una Sala
-- **Crear**: Genera un ID único de 6 caracteres
-- **Unirse**: Introduce el ID de una sala existente
-- Las URLs son compartibles: `http://localhost:5173/room/ABC123`
+### Paleta de Colores
+- **Verde** (`#427b58` / `#8ec07c`): Estados de éxito, usuarios que votaron
+- **Azul** (`#076678` / `#83a598`): Acciones primarias, promedios
+- **Amarillo** (`#b57614` / `#fabd2f`): Hover de tarjetas, advertencias, usuarios esperando
+- **Rojo** (`#9d0006` / `#fb4934`): Errores, valores altos, acciones destructivas
+- **Magenta** (`#8f3f71` / `#d3869b`): Tarjetas seleccionadas, elementos especiales
 
-### 3. Votar
-- Selecciona una carta de la secuencia Fibonacci
-- Tu estado aparece como "Voted" sin revelar el voto
-- Solo puedes votar una vez por ronda
+### Variables CSS
+```css
+/* Colores base */
+--color-light-green: #427b58;
+--color-light-blue: #076678;
+--color-light-yellow: #b57614;
+--color-light-red: #9d0006;
+--color-light-magenta: #8f3f71;
 
-### 4. Revelar Resultados
-- Cualquier participante puede presionar "Reveal Votes"
-- Muestra todos los votos, promedio, y destaca mayor/menor
-- Botón "Reset Votes" para nueva ronda
+/* Estados hover */
+--color-light-green-hover: #4a8962;
+--color-light-blue-hover: #0a7084;
+/* ... más variaciones */
 
-## Personalización
+/* Fondos claros */
+--color-light-green-bg: #e8f5e8;
+--color-light-blue-bg: #e8f4f8;
+/* ... más fondos */
+```
 
-### Secuencia Fibonacci
-Edita `src/shared/constants/index.ts`:
+## 🚀 Instalación y Configuración
+
+### Prerrequisitos
+- Node.js 18+ 
+- npm o yarn
+
+### Instalación
+```bash
+# Clonar el repositorio
+git clone <repository-url>
+cd simple-planning-poker
+
+# Instalar dependencias
+npm install
+
+# Iniciar servidor de desarrollo
+npm run dev
+```
+
+### Scripts Disponibles
+
+```bash
+npm run dev      # Servidor de desarrollo (puerto 5173)
+npm run build    # Build de producción
+npm run preview  # Preview del build
+npm run lint     # Ejecutar linting
+```
+
+## 🔧 Configuración
+
+### Path Aliases
+El proyecto utiliza path aliases configurados en `vite.config.ts`:
+
 ```typescript
-export const FIBONACCI_SEQUENCE: FibonacciCard[] = [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 'infinity', 'unknown'];
+resolve: {
+  alias: {
+    '@app': path.resolve(__dirname, './src/app'),
+    '@features': path.resolve(__dirname, './src/features'),
+    '@shared': path.resolve(__dirname, './src/shared'),
+  },
+}
 ```
 
-### Tema
-Configurado en `tailwind.config.js` con colores personalizables para modo claro y oscuro.
+### Variables de Entorno
+La aplicación se conecta por defecto a `http://localhost:3001` para la API.
 
-## Backend
+## 🎯 Características Principales
 
-El frontend está preparado para conectar con un backend Socket.IO. 
+### 1. Gestión de Usuarios
+- Registro simple con nombre de usuario
+- Persistencia local automática
+- Reconexión automática a salas activas
 
-**Ver [README_BACKEND.md](./README_BACKEND.md)** para especificaciones completas del servidor requerido.
+### 2. Salas de Estimación
+- Creación de salas con títulos opcionales
+- Códigos únicos de 6 caracteres
+- Copia automática de códigos de sala
 
-### Mock Actual
-Actualmente usa un mock que simula:
-- Conexión a salas
-- Usuarios ficticios (Alice, Bob)
-- Votación local
-- Estados de revelado
+### 3. Votación con Tarjetas Poker
+- **Diseño realista**: Proporción 2:3 como cartas reales
+- **Feedback visual**: Colores dinámicos según estado
+- **Animaciones suaves**: Efectos hover y selección
+- **Secuencia Fibonacci**: 0-89, infinito y desconocido
 
-## Scripts Disponibles
+### 4. Resultados en Tiempo Real
+- Cálculo automático de promedio
+- Identificación de valores más altos/bajos
+- Colores semánticos para fácil interpretación
 
-- `npm run dev` - Servidor de desarrollo
-- `npm run build` - Build de producción
-- `npm run preview` - Preview del build
-- `npm run lint` - Linting (si está configurado)
+### 5. Lista de Participantes
+- Estado visual de votación
+- Indicadores animados
+- Conteo en tiempo real
 
-## Desarrollo
+## 🌐 Integración con Backend
 
-### Agregar Nueva Feature
-1. Crear carpeta en `src/features/nueva-feature/`
-2. Implementar hooks, componentes y tipos necesarios
-3. Exportar desde `index.ts`
-4. Integrar en las rutas o componentes principales
+La aplicación se comunica con el backend a través de:
 
-### Custom Hooks Principales
-- `useLocalUser()` - Manejo de usuario localStorage
-- `useRoom()` - Estado y lógica de sala (actualmente mock)
-- `useVoteCalculations()` - Cálculos de votos y promedios
+### REST API
+- `POST /api/rooms` - Crear nueva sala
+- Gestión de salas y usuarios
 
-## Contribuir
+### WebSocket Events
+```typescript
+// Eventos salientes
+'join-room' | 'leave-room' | 'vote' | 'reveal-votes' | 'reset-votes'
 
-1. Fork del repositorio
-2. Crear rama feature: `git checkout -b feature/nueva-funcionalidad`
-3. Commit cambios: `git commit -m 'Agregar nueva funcionalidad'`
-4. Push a la rama: `git push origin feature/nueva-funcionalidad`
-5. Abrir Pull Request
+// Eventos entrantes  
+'user-joined' | 'user-left' | 'vote-cast' | 'votes-revealed' 
+| 'room-state-updated' | 'error'
+```
 
-## Licencia
+## 📱 Responsive Design
 
-MIT
+- **Mobile First**: Optimizado para dispositivos móviles
+- **Grid Adaptativo**: 4 columnas en móvil, 6 en desktop
+- **Navegación intuitiva**: Interfaces táctiles amigables
 
-## Roadmap
+## 🔮 Próximas Mejoras
 
-- [ ] Implementar backend Socket.IO real
-- [ ] Agregar más tipos de tarjetas (T-shirt sizes)
-- [ ] Historial de votaciones
-- [ ] Roles de moderador
-- [ ] Integración con Jira/GitHub
-- [ ] PWA con notificaciones
+- [ ] Persistencia de salas en el servidor
+- [ ] Autenticación de usuarios
+- [ ] Historial de estimaciones
+- [ ] Exportar resultados a PDF/CSV
+- [ ] Temas personalizables
+- [ ] Notificaciones push
+
+## 📄 Licencia
+
+Este proyecto es privado y no está disponible bajo ninguna licencia pública.
