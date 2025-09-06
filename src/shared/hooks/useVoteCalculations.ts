@@ -43,8 +43,8 @@ export const useVoteCalculations = (votes: Record<string, FibonacciCard>, userNa
         userId,
         userName: userNames[userId] || 'Unknown',
         vote,
-        isHighest: typeof vote === 'number' && vote === highest && numericVotes.length > 1,
-        isLowest: typeof vote === 'number' && vote === lowest && numericVotes.length > 1,
+        isHighest: typeof vote === 'number' && vote === highest && numericVotes.length > 1 && highest !== lowest,
+        isLowest: typeof vote === 'number' && vote === lowest && numericVotes.length > 1 && highest !== lowest,
       }));
     };
 

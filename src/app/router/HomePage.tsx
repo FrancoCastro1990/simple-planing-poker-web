@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Row, Col, Card, Form, Input, Button, Typography, Space, Alert } from 'antd';
+import { UserOutlined, HomeOutlined, LoginOutlined } from '@ant-design/icons';
 import { useLocalUser } from '@features/authentication/useLocalUser';
 import { useRoomSession } from '@features/room-management/useRoomSession';
-//import { isValidRoomId } from '@shared/utils';
+
+const { Title, Text } = Typography;
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -96,173 +99,194 @@ export const HomePage = () => {
 
   if (!hasUser) {
     return (
-      <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 animate-slide-up">
-          <h1 className="text-3xl font-bold text-center mb-8 text-light-text dark:text-dark-text">
-            Planning Poker
-          </h1>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2 text-light-text dark:text-dark-text">
-                Enter your name to continue
-              </label>
-              <input
-                type="text"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSaveUser()}
-                placeholder="Your name"
-                className="w-full px-4 py-2 border-2 rounded-lg transition-all duration-200
-                         bg-white dark:bg-gray-700 text-light-text dark:text-dark-text
-                         focus:outline-none focus:ring-0"
-                style={{
-                  borderColor: 'var(--color-light-blue)',
-                  '--tw-ring-color': 'var(--color-light-blue)'
-                }}
-                onFocus={(e) => e.target.style.borderColor = 'var(--color-light-blue-hover)'}
-                onBlur={(e) => e.target.style.borderColor = 'var(--color-light-blue)'}
-                maxLength={50}
-              />
-            </div>
-            
-            {error && (
-              <p className="text-sm font-medium" style={{ color: 'var(--color-light-red)' }}>{error}</p>
-            )}
-            
-            <button
-              onClick={handleSaveUser}
-              disabled={!userName.trim()}
-              className="w-full py-2 px-4 text-white rounded-lg disabled:cursor-not-allowed
-                       transition-all duration-200 font-medium"
-              style={{
-                backgroundColor: userName.trim() ? 'var(--color-light-blue)' : 'var(--color-light-bg)',
-                opacity: userName.trim() ? 1 : 0.5
-              }}
-              onMouseEnter={(e) => {
-                if (userName.trim()) {
-                  e.target.style.backgroundColor = 'var(--color-light-blue-hover)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (userName.trim()) {
-                  e.target.style.backgroundColor = 'var(--color-light-blue)';
-                }
+      <div className="full-height center-content" style={{ padding: '16px' }}>
+        <Row justify="center" style={{ width: '100%' }}>
+          <Col xs={22} sm={16} md={12} lg={8} xl={6}>
+            <Card 
+              style={{ 
+                textAlign: 'center',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
               }}
             >
-              Continue
-            </button>
-          </div>
-        </div>
+              <Space direction="vertical" size="large" style={{ width: '100%' }}>
+                <div>
+                  <Title level={2} style={{ marginBottom: 8 }}>
+                    Planning Poker
+                  </Title>
+                  <Text type="secondary">
+                    Enter your name to continue
+                  </Text>
+                </div>
+
+                <Form onFinish={handleSaveUser} layout="vertical">
+                  <Form.Item
+                    name="userName"
+                    rules={[
+                      { required: true, message: 'Please enter your name' },
+                      { max: 50, message: 'Name must be less than 50 characters' }
+                    ]}
+                  >
+                    <Input
+                      size="large"
+                      prefix={<UserOutlined />}
+                      placeholder="Your name"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      onPressEnter={handleSaveUser}
+                    />
+                  </Form.Item>
+
+                  {error && (
+                    <Alert 
+                      message={error} 
+                      type="error" 
+                      showIcon 
+                      style={{ marginBottom: 16 }} 
+                    />
+                  )}
+
+                  <Form.Item style={{ marginBottom: 0 }}>
+                    <Button 
+                      type="primary" 
+                      size="large" 
+                      htmlType="submit"
+                      loading={false}
+                      disabled={!userName.trim()}
+                      block
+                      icon={<LoginOutlined />}
+                    >
+                      Continue
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Space>
+            </Card>
+          </Col>
+        </Row>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 animate-slide-up">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-light-text dark:text-dark-text">
-            Planning Poker
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Welcome, <span className="font-medium">{user?.name}</span>
-          </p>
-        </div>
+    <div className="full-height center-content" style={{ padding: '16px' }}>
+      <Row justify="center" style={{ width: '100%' }}>
+        <Col xs={22} sm={18} md={14} lg={10} xl={8}>
+          <Card 
+            style={{ 
+              textAlign: 'center',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}
+          >
+            <Space direction="vertical" size="large" style={{ width: '100%' }}>
+              <div>
+                <Title level={2} style={{ marginBottom: 8 }}>
+                  Planning Poker
+                </Title>
+                <Text type="secondary">
+                  Welcome, <Text strong>{user?.name}</Text>
+                </Text>
+              </div>
 
-        <div className="space-y-6">
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-light-text dark:text-dark-text">
-              Create New Room
-            </h2>
-            
-            <input
-              type="text"
-              value={roomTitle}
-              onChange={(e) => setRoomTitle(e.target.value)}
-              placeholder="Room title (optional)"
-              className="w-full px-4 py-2 border-2 rounded-lg transition-all duration-200
-                       bg-white dark:bg-gray-700 text-light-text dark:text-dark-text
-                       focus:outline-none focus:ring-0"
-              style={{
-                borderColor: 'var(--color-light-green)'
-              }}
-              onFocus={(e) => e.target.style.borderColor = 'var(--color-light-green-hover)'}
-              onBlur={(e) => e.target.style.borderColor = 'var(--color-light-green)'}
-              maxLength={100}
-            />
-            
-            <button
-              onClick={handleCreateRoom}
-              disabled={isCreatingRoom}
-              className="w-full py-3 px-4 text-white rounded-lg disabled:cursor-not-allowed 
-                       transition-all duration-200 font-medium"
-              style={{
-                backgroundColor: isCreatingRoom ? 'var(--color-light-green)' : 'var(--color-light-green)',
-                opacity: isCreatingRoom ? 0.7 : 1
-              }}
-              onMouseEnter={(e) => {
-                if (!isCreatingRoom) {
-                  e.target.style.backgroundColor = 'var(--color-light-green-hover)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isCreatingRoom) {
-                  e.target.style.backgroundColor = 'var(--color-light-green)';
-                }
-              }}
-            >
-              {isCreatingRoom ? 'Creating Room...' : 'Create Room'}
-            </button>
-          </div>
+              <Row gutter={[0, 24]}>
+                <Col span={24}>
+                  <Card 
+                    type="inner" 
+                    title={
+                      <Space>
+                        <HomeOutlined />
+                        Create New Room
+                      </Space>
+                    }
+                  >
+                    <Form onFinish={handleCreateRoom} layout="vertical">
+                      <Form.Item name="roomTitle">
+                        <Input
+                          size="large"
+                          placeholder="Room title (optional)"
+                          value={roomTitle}
+                          onChange={(e) => setRoomTitle(e.target.value)}
+                          maxLength={100}
+                        />
+                      </Form.Item>
 
-          <div className="border-t border-gray-200 dark:border-gray-600 pt-6">
-            <h2 className="text-xl font-semibold mb-4 text-light-text dark:text-dark-text">
-              Join Existing Room
-            </h2>
-            
-            <input
-              type="text"
-              value={joinRoomId}
-              onChange={(e) => setJoinRoomId(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
-              placeholder="Enter room ID (6 letters)"
-              className="w-full px-4 py-2 border-2 rounded-lg transition-all duration-200
-                       bg-white dark:bg-gray-700 text-light-text dark:text-dark-text
-                       focus:outline-none focus:ring-0
-                       font-mono text-center tracking-widest"
-              style={{
-                borderColor: 'var(--color-light-magenta)'
-              }}
-              onFocus={(e) => e.target.style.borderColor = 'var(--color-light-magenta-hover)'}
-              onBlur={(e) => e.target.style.borderColor = 'var(--color-light-magenta)'}
-              maxLength={6}
-            />
-            
-            <button
-              onClick={handleJoinRoom}
-              //disabled={!joinRoomId.trim()}
-              className="w-full mt-4 py-3 px-4 text-white rounded-lg
-                       transition-all duration-200 font-medium"
-              style={{
-                backgroundColor: 'var(--color-light-magenta)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = 'var(--color-light-magenta-hover)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'var(--color-light-magenta)';
-              }}
-            >
-              Join Room
-            </button>
-          </div>
-          
-          {error && (
-            <p className="text-sm text-center font-medium" style={{ color: 'var(--color-light-red)' }}>{error}</p>
-          )}
-        </div>
-      </div>
+                      <Form.Item style={{ marginBottom: 0 }}>
+                        <Button 
+                          type="primary"
+                          size="large"
+                          htmlType="submit"
+                          loading={isCreatingRoom}
+                          block
+                          icon={<HomeOutlined />}
+                        >
+                          {isCreatingRoom ? 'Creating Room...' : 'Create Room'}
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </Card>
+                </Col>
+
+                <Col span={24}>
+                  <Card 
+                    type="inner" 
+                    title={
+                      <Space>
+                        <LoginOutlined />
+                        Join Existing Room
+                      </Space>
+                    }
+                  >
+                    <Form onFinish={handleJoinRoom} layout="vertical">
+                      <Form.Item
+                        name="joinRoomId"
+                        rules={[
+                          { required: true, message: 'Please enter a room ID' },
+                          { len: 6, message: 'Room ID must be exactly 6 characters' }
+                        ]}
+                      >
+                        <Input
+                          size="large"
+                          placeholder="Enter room ID (6 letters)"
+                          value={joinRoomId}
+                          onChange={(e) => setJoinRoomId(e.target.value.toUpperCase())}
+                          onPressEnter={handleJoinRoom}
+                          maxLength={6}
+                          style={{ 
+                            fontFamily: 'monospace', 
+                            textAlign: 'center', 
+                            letterSpacing: '2px',
+                            textTransform: 'uppercase'
+                          }}
+                        />
+                      </Form.Item>
+
+                      <Form.Item style={{ marginBottom: 0 }}>
+                        <Button 
+                          htmlType="submit"
+                          size="large"
+                          block
+                          icon={<LoginOutlined />}
+                        >
+                          Join Room
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </Card>
+                </Col>
+              </Row>
+              
+              {error && (
+                <Alert 
+                  message={error} 
+                  type="error" 
+                  showIcon 
+                  closable
+                  onClose={() => setError('')}
+                />
+              )}
+            </Space>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };

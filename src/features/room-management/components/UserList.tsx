@@ -1,4 +1,8 @@
+import { Card, List, Avatar, Badge, Typography, Space, Empty } from 'antd';
+import { UserOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import type { User } from '@app/types';
+
+const { Title, Text } = Typography;
 
 interface UserListProps {
   users: User[];
@@ -6,51 +10,90 @@ interface UserListProps {
 
 export const UserList = ({ users }: UserListProps) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-      <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-        Participants ({users.length})
-      </h2>
-      
-      <div className="space-y-3">
-        {users.map((user) => (
-          <div
-            key={user.id}
-            className="flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-200"
-            style={{
-              backgroundColor: user.hasVoted ? 'var(--color-light-green-bg)' : 'var(--color-light-yellow-bg)',
-              borderColor: user.hasVoted ? 'var(--color-light-green)' : 'var(--color-light-yellow)'
-            }}
-          >
-            <div className="flex items-center gap-3">
-              <div 
-                className="w-3 h-3 rounded-full transition-all duration-300"
-                style={{
-                  backgroundColor: user.hasVoted ? 'var(--color-light-green)' : 'var(--color-light-yellow)',
-                  animation: user.hasVoted ? 'pulse 2s infinite' : 'none'
-                }}
-              />
-              <span className="text-gray-900 dark:text-white font-medium">
-                {user.name}
-              </span>
-            </div>
-            
-            <div 
-              className="text-xs font-medium"
+    <Card 
+      title={
+        <Space>
+          <UserOutlined />
+          <Title level={3} style={{ margin: 0 }}>
+            Participants ({users.length})
+          </Title>
+        </Space>
+      }
+      style={{ height: '100%' }}
+    >
+      {users.length > 0 ? (
+        <List
+          dataSource={users}
+          renderItem={(user) => (
+            <List.Item
               style={{
-                color: user.hasVoted ? 'var(--color-light-green)' : 'var(--color-light-yellow)'
+                padding: '12px 16px',
+                borderRadius: '8px',
+                marginBottom: '8px',
+                border: '2px solid',
+                borderColor: user.hasVoted ? '#427b58' : '#b57614',
+                backgroundColor: user.hasVoted ? '#e8f5e8' : '#fef3e2',
+                transition: 'all 0.3s ease',
               }}
             >
-              {user.hasVoted ? 'Voted' : 'Waiting'}
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      {users.length === 0 && (
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-          No participants yet
-        </div>
+              <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+                <Space>
+                  <Badge 
+                    status={user.hasVoted ? 'success' : 'warning'}
+                    dot
+                    style={{
+                      animation: user.hasVoted ? 'pulse 2s infinite' : 'none'
+                    }}
+                  />
+                  <Avatar 
+                    icon={<UserOutlined />} 
+                    size="small"
+                    style={{
+                      backgroundColor: user.hasVoted ? '#427b58' : '#b57614'
+                    }}
+                  />
+                  <Text strong>{user.name}</Text>
+                </Space>
+                
+                <Space>
+                  {user.hasVoted ? (
+                    <>
+                      <CheckCircleOutlined style={{ color: '#427b58' }} />
+                      <Text 
+                        style={{ 
+                          fontSize: '12px', 
+                          color: '#427b58',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        Voted
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <ClockCircleOutlined style={{ color: '#b57614' }} />
+                      <Text 
+                        style={{ 
+                          fontSize: '12px', 
+                          color: '#b57614',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        Waiting
+                      </Text>
+                    </>
+                  )}
+                </Space>
+              </Space>
+            </List.Item>
+          )}
+        />
+      ) : (
+        <Empty 
+          description="No participants yet"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
       )}
-    </div>
+    </Card>
   );
 };

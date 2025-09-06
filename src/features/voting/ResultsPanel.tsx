@@ -1,6 +1,10 @@
+import { Card, Button, Typography, Space, Statistic, List, Tag, Empty } from 'antd';
+import { EyeOutlined, TrophyOutlined, BarChartOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import type { User, FibonacciCard } from '@app/types';
 import { useVoteCalculations } from '@shared/hooks/useVoteCalculations';
 import { formatVoteForDisplay } from '@shared/utils';
+
+const { Title, Text } = Typography;
 
 interface ResultsPanelProps {
   votes: Record<string, FibonacciCard>;
@@ -20,117 +24,125 @@ export const ResultsPanel = ({ votes, users, isRevealed, onReveal, canReveal }: 
 
   if (!isRevealed) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-          Results
-        </h2>
-        
-        <div className="text-center py-8">
-          <div className="mb-4">
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">
-              {totalVotes}
-            </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              vote{totalVotes !== 1 ? 's' : ''} cast
-            </div>
-          </div>
+      <Card 
+        title={
+          <Space>
+            <BarChartOutlined />
+            <Title level={3} style={{ margin: 0 }}>Results</Title>
+          </Space>
+        }
+        style={{ height: '100%' }}
+      >
+        <Space direction="vertical" size="large" style={{ width: '100%', textAlign: 'center' }}>
+          <Statistic
+            title="Votes Cast"
+            value={totalVotes}
+            suffix={totalVotes !== 1 ? 'votes' : 'vote'}
+            valueStyle={{ fontSize: '2rem', fontWeight: 'bold' }}
+          />
           
-          <button
+          <Button 
+            type="primary"
+            size="large"
+            icon={<EyeOutlined />}
             onClick={onReveal}
             disabled={!canReveal}
-            className="px-6 py-3 text-white rounded-lg disabled:cursor-not-allowed
-                     transition-all duration-200 font-medium"
-            style={{
-              backgroundColor: canReveal ? 'var(--color-light-green)' : 'var(--color-light-bg)',
-              opacity: canReveal ? 1 : 0.5
-            }}
-            onMouseEnter={(e) => {
-              if (canReveal) {
-                e.target.style.backgroundColor = 'var(--color-light-green-hover)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (canReveal) {
-                e.target.style.backgroundColor = 'var(--color-light-green)';
-              }
-            }}
+            block
           >
             Reveal Votes
-          </button>
+          </Button>
           
           {!canReveal && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            <Text type="secondary" style={{ fontSize: '12px' }}>
               Need at least one vote to reveal
-            </p>
+            </Text>
           )}
-        </div>
-      </div>
+        </Space>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-      <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-        Results
-      </h2>
-      
-      <div className="mb-6 text-center">
-        <div className="text-3xl font-bold" style={{ color: 'var(--color-light-blue)' }}>
-          {average}
-        </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          Average
-        </div>
-      </div>
-      
-      <div className="space-y-2">
-        {results.map((result) => (
-          <div
-            key={result.userId}
-            className="flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-200"
-            style={{
-              backgroundColor: result.isHighest 
-                ? 'var(--color-light-red-bg)' 
-                : result.isLowest
-                ? 'var(--color-light-blue-bg)'
-                : 'var(--color-light-green-bg)',
-              borderColor: result.isHighest 
-                ? 'var(--color-light-red)' 
-                : result.isLowest
-                ? 'var(--color-light-blue)'
-                : 'var(--color-light-green)'
+    <Card 
+      title={
+        <Space>
+          <TrophyOutlined />
+          <Title level={3} style={{ margin: 0 }}>Results</Title>
+        </Space>
+      }
+      style={{ height: '100%' }}
+    >
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <div style={{ textAlign: 'center' }}>
+          <Statistic
+            title="Average"
+            value={average}
+            precision={1}
+            valueStyle={{ 
+              fontSize: '2.5rem', 
+              fontWeight: 'bold', 
+              color: '#076678' 
             }}
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-900 dark:text-white">
-                {result.userName}
-              </span>
-              {result.isHighest && (
-                <span className="text-xs px-2 py-1 text-white rounded font-medium"
-                      style={{ backgroundColor: 'var(--color-light-red)' }}>
-                  HIGH
-                </span>
-              )}
-              {result.isLowest && (
-                <span className="text-xs px-2 py-1 text-white rounded font-medium"
-                      style={{ backgroundColor: 'var(--color-light-blue)' }}>
-                  LOW
-                </span>
-              )}
-            </div>
-            
-            <div className="text-lg font-bold text-gray-900 dark:text-white">
-              {formatVoteForDisplay(result.vote)}
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      {results.length === 0 && (
-        <div className="text-center text-gray-500 dark:text-gray-400 py-4">
-          No votes to display
+          />
         </div>
-      )}
-    </div>
+        
+        {results.length > 0 ? (
+          <List
+            dataSource={results}
+            renderItem={(result) => (
+              <List.Item
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  marginBottom: '8px',
+                  border: '2px solid',
+                  borderColor: result.isHighest 
+                    ? '#9d0006' 
+                    : result.isLowest 
+                    ? '#076678'
+                    : '#427b58',
+                  backgroundColor: result.isHighest 
+                    ? '#fdeaea' 
+                    : result.isLowest 
+                    ? '#e8f4f8'
+                    : '#e8f5e8',
+                }}
+              >
+                <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+                  <Space>
+                    <Text strong>{result.userName}</Text>
+                    {result.isHighest && (
+                      <Tag color="red" icon={<ArrowUpOutlined />}>
+                        HIGH
+                      </Tag>
+                    )}
+                    {result.isLowest && (
+                      <Tag color="blue" icon={<ArrowDownOutlined />}>
+                        LOW
+                      </Tag>
+                    )}
+                  </Space>
+                  
+                  <Text 
+                    style={{ 
+                      fontSize: '18px', 
+                      fontWeight: 'bold',
+                      fontFamily: 'monospace' 
+                    }}
+                  >
+                    {formatVoteForDisplay(result.vote)}
+                  </Text>
+                </Space>
+              </List.Item>
+            )}
+          />
+        ) : (
+          <Empty 
+            description="No votes to display"
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        )}
+      </Space>
+    </Card>
   );
 };

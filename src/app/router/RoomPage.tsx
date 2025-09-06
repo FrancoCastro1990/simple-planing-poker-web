@@ -1,7 +1,11 @@
 import { useParams, Navigate } from 'react-router-dom';
+import { Spin, Layout } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import { useLocalUser } from '@features/authentication/useLocalUser';
-//import { isValidRoomId } from '@shared/utils';
 import { RoomContainer } from '@features/room-management/RoomContainer';
+
+const { Content } = Layout;
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 export const RoomPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -9,9 +13,11 @@ export const RoomPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex items-center justify-center">
-        <div className="text-light-text dark:text-dark-text">Loading...</div>
-      </div>
+      <Layout className="full-height">
+        <Content className="center-content">
+          <Spin indicator={antIcon} />
+        </Content>
+      </Layout>
     );
   }
 

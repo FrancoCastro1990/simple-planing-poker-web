@@ -1,6 +1,10 @@
+import { Row, Col, Card, Typography, Alert, Space } from 'antd';
+import { CheckOutlined } from '@ant-design/icons';
 import type { FibonacciCard } from '@app/types';
 import { FIBONACCI_SEQUENCE } from '@shared/constants';
 import { formatVoteForDisplay } from '@shared/utils';
+
+const { Title, Text } = Typography;
 
 interface VotingAreaProps {
   currentUserVote?: FibonacciCard;
@@ -17,90 +21,119 @@ export const VotingArea = ({ currentUserVote, onVote, isRevealed, canVote, userI
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-      <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-        Choose Your Estimate
-      </h2>
-      
-      {isRevealed && (
-        <div className="mb-4 p-3 rounded-lg border-2"
-             style={{
-               backgroundColor: 'var(--color-light-green-bg)',
-               borderColor: 'var(--color-light-green)',
-               color: 'var(--color-light-green)'
-             }}>
-          <p className="text-sm font-medium">
-            Votes have been revealed! Reset to vote again.
-          </p>
-        </div>
-      )}
-      
-      <div className="grid grid-cols-4 sm:grid-cols-6 gap-4">
-        {FIBONACCI_SEQUENCE.map((value) => {
-          const isSelected = currentUserVote === value;
-          const isDisabled = !canVote || isRevealed;
-          
-          return (
-            <button
-              key={value}
-              onClick={() => handleVote(value)}
-              disabled={isDisabled}
-              className={`
-                aspect-[2/3] rounded-xl border-2 text-xl font-bold transition-all duration-300
-                transform hover:scale-105 hover:-translate-y-1 active:scale-95 
-                disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0
-                shadow-lg hover:shadow-xl disabled:shadow-md
-                ${isSelected
-                  ? 'border-light-magenta dark:border-dark-magenta bg-light-magenta dark:bg-dark-magenta text-white'
-                  : 'border-light-yellow dark:border-dark-yellow bg-white dark:bg-gray-700 text-light-text dark:text-dark-text hover:bg-light-yellow-bg dark:hover:bg-dark-yellow-bg hover:border-light-yellow-hover dark:hover:border-dark-yellow-hover'
-                }
-                ${isDisabled ? 'opacity-50' : ''}
-                relative overflow-hidden
-              `}
-              style={{
-                borderColor: isSelected 
-                  ? 'var(--color-light-magenta)' 
-                  : 'var(--color-light-yellow)',
-                backgroundColor: isSelected
-                  ? 'var(--color-light-magenta)'
-                  : isDisabled 
-                    ? undefined
-                    : undefined,
-                color: isSelected ? 'white' : 'var(--color-light-text)',
-              }}
-              title={`Vote ${formatVoteForDisplay(value)}`}
-            >
-              <div className="absolute inset-0 flex items-center justify-center">
-                {formatVoteForDisplay(value)}
-              </div>
-              {isSelected && (
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/10 pointer-events-none" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-      
-      {currentUserVote && !isRevealed && (
-        <div className="mt-4 p-3 rounded-lg border-2"
-             style={{
-               backgroundColor: 'var(--color-light-magenta-bg)',
-               borderColor: 'var(--color-light-magenta)',
-               color: 'var(--color-light-magenta)'
-             }}>
-          <p className="text-sm font-medium">
-            You voted: <span className="font-bold">{formatVoteForDisplay(currentUserVote)}</span>
-          </p>
-        </div>
-      )}
-      
-      {!canVote && (
-        <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
-            You need to be logged in to vote
-          </p>
-        </div>
-      )}
-    </div>
+    <Card 
+      title={
+        <Title level={3} style={{ margin: 0 }}>
+          Choose Your Estimate
+        </Title>
+      }
+      style={{ height: '100%' }}
+    >
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        {isRevealed && (
+          <Alert
+            message="Votes have been revealed! Reset to vote again."
+            type="success"
+            showIcon
+          />
+        )}
+        
+        <Row gutter={[12, 12]} justify="center">
+          {FIBONACCI_SEQUENCE.map((value) => {
+            const isSelected = currentUserVote === value;
+            const isDisabled = !canVote || isRevealed;
+            
+            return (
+              <Col 
+                key={value} 
+                xs={6} 
+                sm={4} 
+                md={4} 
+                lg={3} 
+                xl={3}
+                style={{ display: 'flex', justifyContent: 'center' }}
+              >
+                <Card
+                  hoverable={!isDisabled}
+                  onClick={() => handleVote(value)}
+                  style={{
+                    width: '100%',
+                    height: '80px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: isDisabled ? 'not-allowed' : 'pointer',
+                    backgroundColor: isSelected ? '#8f3f71' : undefined,
+                    borderColor: isSelected ? '#8f3f71' : '#b57614',
+                    borderWidth: 2,
+                    opacity: isDisabled ? 0.6 : 1,
+                    transition: 'all 0.3s ease',
+                    transform: isSelected ? 'scale(1.05)' : 'scale(1)',
+                  }}
+                  bodyStyle={{
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    color: isSelected ? 'white' : undefined,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isDisabled && !isSelected) {
+                      e.currentTarget.style.backgroundColor = '#fef3e2';
+                      e.currentTarget.style.transform = 'scale(1.02) translateY(-2px)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isDisabled && !isSelected) {
+                      e.currentTarget.style.backgroundColor = '';
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }
+                  }}
+                >
+                  <div style={{ position: 'relative' }}>
+                    {formatVoteForDisplay(value)}
+                    {isSelected && (
+                      <CheckOutlined 
+                        style={{ 
+                          position: 'absolute', 
+                          top: '-8px', 
+                          right: '-8px', 
+                          color: 'white',
+                          fontSize: '12px'
+                        }} 
+                      />
+                    )}
+                  </div>
+                </Card>
+              </Col>
+            );
+          })}
+        </Row>
+        
+        {currentUserVote && !isRevealed && (
+          <Alert
+            message={
+              <Text>
+                You voted: <Text strong>{formatVoteForDisplay(currentUserVote)}</Text>
+              </Text>
+            }
+            type="info"
+            showIcon
+            icon={<CheckOutlined />}
+          />
+        )}
+        
+        {!canVote && (
+          <Alert
+            message="You need to be logged in to vote"
+            type="warning"
+            showIcon
+          />
+        )}
+      </Space>
+    </Card>
   );
 };

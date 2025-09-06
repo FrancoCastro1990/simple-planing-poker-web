@@ -1,70 +1,36 @@
-@tailwind utilities;
+/* Base CSS - Solo estilos básicos, Ant Design manejará el resto */
 
-@theme {
-  /* Light Theme - Base Colors */
-  --color-light-bg: #fdfdfd;
-  --color-light-text: #1c1c1c;
-  --color-light-green: #427b58;
-  --color-light-blue: #076678;
-  --color-light-yellow: #b57614;
-  --color-light-red: #9d0006;
-  --color-light-magenta: #8f3f71;
-
-  /* Light Theme - Hover States */
-  --color-light-green-hover: #4a8962;
-  --color-light-blue-hover: #0a7084;
-  --color-light-yellow-hover: #c7801a;
-  --color-light-red-hover: #b2000a;
-  --color-light-magenta-hover: #a0467f;
-
-  /* Light Theme - Light Backgrounds */
-  --color-light-green-bg: #e8f5e8;
-  --color-light-blue-bg: #e8f4f8;
-  --color-light-yellow-bg: #fef3e2;
-  --color-light-red-bg: #fdeaea;
-  --color-light-magenta-bg: #f5e8f2;
-
-  /* Dark Theme - Base Colors */
-  --color-dark-bg: #0d0d0d;
-  --color-dark-text: #eaeaea;
-  --color-dark-green: #8ec07c;
-  --color-dark-blue: #83a598;
-  --color-dark-yellow: #fabd2f;
-  --color-dark-red: #fb4934;
-  --color-dark-magenta: #d3869b;
-
-  /* Dark Theme - Hover States */
-  --color-dark-green-hover: #9fd08b;
-  --color-dark-blue-hover: #94b5a7;
-  --color-dark-yellow-hover: #fcc842;
-  --color-dark-red-hover: #fc5e47;
-  --color-dark-magenta-hover: #dd95aa;
-
-  /* Dark Theme - Dark Backgrounds */
-  --color-dark-green-bg: rgba(142, 192, 124, 0.15);
-  --color-dark-blue-bg: rgba(131, 165, 152, 0.15);
-  --color-dark-yellow-bg: rgba(250, 189, 47, 0.15);
-  --color-dark-red-bg: rgba(251, 73, 52, 0.15);
-  --color-dark-magenta-bg: rgba(211, 134, 155, 0.15);
-
-  /* Fonts */
-  --font-family-sans: Inter, system-ui, sans-serif;
-  --font-family-mono: 'Fira Code', 'JetBrains Mono', Monaco, Consolas, monospace;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@layer base {
-  body {
-    background-color: var(--color-light-bg);
-    color: var(--color-light-text);
-    font-family: var(--font-family-sans);
-    font-feature-settings: "rlig" 1, "calt" 1;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  .dark body {
-    background-color: var(--color-dark-bg);
-    color: var(--color-dark-text);
-  }
+html {
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Utilidades básicas para casos específicos */
+.full-height {
+  min-height: 100vh;
+}
+
+.center-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
